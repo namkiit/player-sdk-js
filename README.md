@@ -1,24 +1,27 @@
-# Vinasport-Player-Web
+# Player-SDK-JS
 
-## Bắt đầu
+## Introduction
+This documentation provides comprehensive instructions on integrating and using the `Player-SDK-JS` in your project. It details the initialization process, necessary parameters, and available functions to effectively manage video playback, including handling errors and displaying viewer counts.
 
-Import file player-sdk.js vào dự án và link với file index.html. Sau khi import thành công, window DOM element sẽ chứa 1 biến là playerSDK.
+## Getting Started
 
-Biến playerSDK chứa 1 instance là VinasportPlayer.
+Begin by importing the `player-sdk.js` file into your project and linking it with `index.html`. Upon successful import, the window DOM element will contain a variable named `playerSDK`
+
+The `playerSDK` variable contains an instance of `VinasportPlayer`.
 
 ``` javascript
     const { PlayerSDK } = window.playerSDK;
 ```
 
-Chúng ta cần truyền vào instance 3 tham số lần lượt là container, infoPlayer và hàm callback handleError.
+The player instance requires three parameters: `container`, `infoPlayer`, and the callback function `handleError`.
 
-container là thẻ div chứa player.
+`container`: The div element that will contain the player.
 
 ``` javascript
     const container = document.querySelector("#container");
 ```
 
-infoPlayer là object gồm các key chứa thông tin của player.
+`infoPlayer`: An object with various properties defining the player's behavior and content.
 
 ``` javascript
     const infoPlayer = {
@@ -41,45 +44,45 @@ infoPlayer là object gồm các key chứa thông tin của player.
         volume: 0.4
     }
 ```
-- src: source của video (string)
-- contentId: id của video (string)
-- signKey: sign key của video (string)
-- licenseServer: license server của video (string)
-- drm: true khi video cần sign key để xem, false khi ngược lại (boolean)
-- isLive: true khi video dạng livestream, false khi video dạng VOD (boolean)
-- allowTimeshift: true khi video live cho phép tua, false khi ngược lại (boolean). Thời gian tua lại so với thời gian hiện tại của video là 1 tiếng.
-- isAdOn: true khi muốn player hiển thị quảng cáo lúc đầu vào, false khi ngược lại (boolean)
-- adTagUrl: url của quảng cáo muốn player hiển thị (string)
-- trackingUrl: url của api tracking time event
-- name: tiêu đề của video (string)
-- startTime: thời gian bắt đầu (string)
-- volume: âm lượng video, có giá trị từ 0 đến 1 (number)
+- `src`: source URL of the video (string)
+- `contentId`: ID of the video (string)
+- `signKey`: sign key of the video (string)
+- `licenseServer`: license server URL of the video (string)
+- `drm`: true if the video requires a sign key to view, false otherwise (boolean)
+- `isLive`: true if the video is a livestream, false if it's VOD (boolean)
+- `allowTimeshift`: true if live video allows seeking, false otherwise (boolean). The maximum rewind time from the current live time is 1 hour.
+- `isAdOn`: true to show ads at the beginning, false otherwise (boolean)
+- `adTagUrl`: URL of the ad to display (string)
+- `trackingUrl`: URL of the API for tracking time events
+- `name`: title of the video (string)
+- `startTime`: start time of the video (string)
+- `volume`: volume of the video, ranging from 0 to 1 (number)
 
-Hàm handleError là function callback trả về mã lỗi khi xảy ra lỗi video.
+`handleError` is a callback function that returns an error code when a video error occurs.
 
 ```javascript
     const handleError = (error) => {
       console.log('error :>> ', error);
     }
 ```
-## Khởi tạo và sử dụng Player
+## Player Initialization and Usage
 
-Gọi hàm initialize để khởi tạo player.
+Call the `initialize` function to initialize the player.
 
 ```javascript
     let player = new VinasportsPlayer(container, infoPlayer, handleError)
     player.initialize() 
 ```
 
-Lưu ý rằng mỗi khi chuyển sang link video mới hoặc tắt trang web phải destroy player, nếu không sẽ xảy ra lỗi.
+Note that whenever switching to a new video link or closing the web page, you must destroy the player to avoid errors.
 
 ```javascript
     player.destroy() 
 ```
 
-## Hiển thị lượt views trên video live
+## Displaying Views on Live Video
 
-Gọi hàm showViews để hiển thị số người xem, hàm nhận 2 tham số kiểu number. Tham số đầu tiên là lượt view thật, tham số thứ 2 là lượt view tối thiểu hiển thị. Ví dụ hàm sau đây hiển thị số người xem là 15260, player sẽ format và làm tròn thành "15.3K". Nếu số người xem nhỏ hơn 100 thì player hiển thị 100 view.
+Call the `showViews` function to display the number of viewers. The function takes two number parameters. The first parameter is the actual number of views, and the second parameter is the minimum number of views to display. For example, the following function call displays 15,260 viewers, which the player will format and round to "15.3K". If the number of viewers is less than 100, the player will display 100 views.
 
 ``` javascript
     player.showViews(15260, 100) 
@@ -87,7 +90,7 @@ Gọi hàm showViews để hiển thị số người xem, hàm nhận 2 tham s�
 
 ## Fingerprint
 
-Tính năng hiển thị fingerprint trên video live có DRM.
+The feature to display a fingerprint on DRM live videos.
 
 ``` javascript
     if(isLive) {
@@ -95,41 +98,16 @@ Tính năng hiển thị fingerprint trên video live có DRM.
       }
 ```
 
-Hàm callFingerprintAPI đã bao gồm trong hàm khởi tạo Player. Hàm sẽ gọi lần đầu khi video là định dạng Live. Hàm này sẽ tự gọi lại sau 1 khoảng thời gian (được lấy từ API Fingerprint Health-Check). Nếu user bị block thì sẽ trả về mã lỗi 403.
+The `callFingerprintAPI` function is included in the Player initialization function. It will be called the first time when the video is in Live format. This function will automatically be called again after a certain period (obtained from the Fingerprint Health-Check API). If the user is blocked, it will return error code 403.
 
-Tính năng tracking mốc thời gian ở video đã xem. Hàm nhận tham số đầu vào là một object với những thuộc tính như ở dưới:
+## Error Codes
 
-```javascript
-    player.trackingTime({
-        app_id: "ONPlus", // Required, Định danh ứng dụng trên tất cả các nền tảng 
-        app_package: "onplus.com.vn", // Required, Định danh ứng dụng trên từng nền tảng 
-        user_id: "254785436", // Required, Định danh người dùng 
-        advertising_id: "", 
-        device_id: "aaaa", // Required, Định danh thiết bị 
-        device_model: "", 
-        device_brand: "", 
-        device_os: "",
-        mobile_number: "", 
-        fullname: "", 
-        address: "", 
-        channel_id: "channel_123", // Required, Định danh kênh xem
-        channel_title: "channel title", 
-        program_id: "", 
-        program_title: "", 
-        genre: "", 
-    })
-```
+Error codes are returned by the `onError` callback function.
 
-Những thuộc tính nào được đánh dấu là "required" mà truyền vào với giá trị rỗng thì console sẽ báo những thuộc tính còn thiếu.
+- Error 0: The user is using a VPN.
+- Error 400: Link format error.
+- Error 401: Incorrect or expired sign key.
+- Error 403: User violated copyright and is blocked.
+- Error 410: User is using an adblocker.
 
-## Mã lỗi
-
-Mã lỗi được trả về bởi callback function onError.
-
-- Lỗi 0: Người dùng đang sử dụng VPN.
-- Lỗi 400: lỗi định dạng link.
-- Lỗi 401: sign key sai hoặc hết hạn.
-- Lỗi 403: user vi phạm bản quyền & bị block.
-- Lỗi 410: user đang sử dụng adblock.
-
-Các lỗi khác sẽ được trả về dưới định dạng number 4 chữ số. Chi tiết xem tại https://shaka-player-demo.appspot.com/docs/api/shaka.util.Error.html
+Other errors will be returned in a 4-digit number format. For details, see [Shaka Player Error Codes](https://shaka-player-demo.appspot.com/docs/api/shaka.util.Error.html).
