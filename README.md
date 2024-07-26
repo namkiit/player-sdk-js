@@ -1,8 +1,6 @@
 # Player-SDK-JS
 
-## Introduction
-
-This documentation provides comprehensive instructions on integrating and using the `Player-SDK-JS` in your project. It details the initialization process, necessary parameters, and available functions to effectively manage video playback, including handling errors and displaying viewer counts.
+A video player SDK that plays adaptive media formats (such as DASH & HLS) in a browser, using [ShakaJS](https://github.com/shaka-project/shaka-player).
 
 ## Getting Started
 
@@ -29,7 +27,7 @@ This documentation provides comprehensive instructions on integrating and using 
 Upon successful import, the window DOM element will contain a variable named `playerSDK`. The `playerSDK` variable contains an instance of `VinasportPlayer`.
 
 ```javascript
-const { PlayerSDK } = window.playerSDK;
+const { PlayerSDK } = window.playerSDK
 ```
 
 The player instance requires three parameters: `container`, `infoPlayer`, and the callback function `handleError`.
@@ -37,7 +35,7 @@ The player instance requires three parameters: `container`, `infoPlayer`, and th
 `container`: The div element that will contain the player.
 
 ```javascript
-const container = document.querySelector("#container");
+const container = document.querySelector("#container")
 ```
 
 `infoPlayer`: An object with various properties defining the player's behavior and content.
@@ -83,18 +81,18 @@ const infoPlayer = {
 
 ```javascript
 const handleError = (error) => {
-  console.log("error :>> ", error);
+  console.log("error :>> ", error)
 };
 ```
 
 Call the `initialize` function to initialize the player.
 
 ```javascript
-let player = new VinasportsPlayer(container, infoPlayer, handleError);
-player.initialize();
+let player = new VinasportsPlayer(container, infoPlayer, handleError)
+player.initialize()
 ```
 
-Note that whenever switching to a new video link or closing the web page, you must destroy the player to avoid errors.
+Ensure all the player instances are destroyed when switching to a new video link or closing the web page to prevent errors. In ReactJS, put this in the cleanup function:
 
 ```javascript
 player.destroy();
@@ -121,7 +119,7 @@ if (isLive) {
     checkFingerprint,
     hideFingerprint,
     onError
-  );
+  )
 }
 ```
 

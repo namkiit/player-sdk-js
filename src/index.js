@@ -411,7 +411,7 @@ export class PlayerSDK {
     const btnMultiQuality = document.createElement("div")
     setClass(btnMultiQuality, "button switch__quality hide")
     btnMultiQuality.appendChild(iconMultiQuality)
-    // rightSideBtns.appendChild(btnMultiQuality) -- uncomment if you want to add change quality button
+    rightSideBtns.appendChild(btnMultiQuality) 
 
     const divSwitchQuality = document.createElement("div")
     const titleSwitchQuality = document.createElement("div")
@@ -419,7 +419,7 @@ export class PlayerSDK {
     titleSwitchQuality.innerText = "Lựa chọn chất lượng"
     divSwitchQuality.appendChild(titleSwitchQuality)
     setClass(divSwitchQuality, "div__quality hide")
-    // rightSideBtns.appendChild(divSwitchQuality) -- uncomment if you want to add change quality button
+    rightSideBtns.appendChild(divSwitchQuality) 
 
     btnMultiQuality.addEventListener("mousedown", (e) => {
       e.stopPropagation()

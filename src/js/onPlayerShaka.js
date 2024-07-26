@@ -57,8 +57,6 @@ const onPlayerShaka = (video, dataPlayer, onError) => {
         if (index == 0) {
           trackDiv.classList.add("active")
           trackDiv.appendChild(iconCheck)
-          if (track.language == "und")
-            window.btnMultiAudio.classList.add("hide")
         }
 
         trackDiv.addEventListener("click", (e) => {
@@ -81,53 +79,53 @@ const onPlayerShaka = (video, dataPlayer, onError) => {
         window.btnMultiAudio.classList.add("hide")
 
 
-      /* uncomment if you want to add change quality feature */
+      let qualityLevels = playerShaka.getVariantTracks()
+      if (qualityLevels.length > 1) window.btnMultiQuality.classList.remove("hide")
+      qualityLevels.sort((a, b) => b.bandwidth - a.bandwidth)
 
-      // let qualityLevels = playerShaka.getVariantTracks()
-      // if (qualityLevels.length > 1) window.btnMultiQuality.classList.remove("hide")
+      qualityLevels.forEach((level, index) => {
+        const levelDiv = document.createElement("div")
+        switch (level.width) {
+          case 256:
+            levelDiv.innerText = "144p"
+            break
+          case 426:
+            levelDiv.innerText = "240p"
+            break
+          case 640:
+            levelDiv.innerText = "360p"
+            break
+          case 864:
+            levelDiv.innerText = "480p"
+            break
+          case 1280:
+            levelDiv.innerText = "720p"
+            break
+          case 1920:
+            levelDiv.innerText = "1080p"
+            break
+        }
+        setClass(levelDiv, `level ${index}`)
+        if (level.active) {
+          levelDiv.classList.add("active")
+          levelDiv.appendChild(iconCheck)
+        }
 
-      // qualityLevels.forEach((level, index) => {
-      //   const levelDiv = document.createElement("div")
-      //   switch (level.width) {
-      //     case 256:
-      //       levelDiv.innerText = "144p"
-      //       break
-      //     case 426:
-      //       levelDiv.innerText = "240p"
-      //       break
-      //     case 640:
-      //       levelDiv.innerText = "360p"
-      //       break
-      //      case 864:
-      //       levelDiv.innerText = "480p"
-      //       break
-      //     case 1280:
-      //       levelDiv.innerText = "720p"
-      //       break
-      //     case 1920:
-      //       levelDiv.innerText = "1080p"
-      //       break
-      //   }
-      //   setClass(levelDiv, `level ${index}`)
-      //   if (index == 0) {
-      //     levelDiv.classList.add("active")
-      //     levelDiv.appendChild(iconCheck)
-      //     if (level.language == "und")
-      //       window.btnMultiQuality.classList.add("hide")
-      //   }
+        levelDiv.addEventListener("click", (e) => {
+          window.playerShaka.configure({abr: {enabled: false}})
+          window.playerShaka.selectVariantTrack(level, true, 0)
 
-      //   levelDiv.addEventListener("click", (e) => {
-      //     window.playerShaka.selectQualityLanguage(level.language)
+          document.querySelectorAll("[class^='level']").forEach((element) => {
+            element.classList.remove("active")
+            if (element.childNodes.length > 1)
+              element.removeChild(document.querySelectorAll(".icon-check")[0])
+          })
+          e.target.classList.add("active")
+          e.target.appendChild(iconCheck)
+        })
 
-      //     document.querySelectorAll("[class^='level']").forEach((element) => {
-      //       element.classList.remove("active")
-      //       if (element.childNodes.length > 1)
-      //         element.removeChild(document.querySelectorAll(".icon-check")[0])
-      //     })
-      //     e.target.classList.add("active")
-      //     e.target.appendChild(iconCheck)
-      //   })
-      // })
+        window.divSwitchQuality.appendChild(levelDiv)
+      })
     })
 
     if (src) {
