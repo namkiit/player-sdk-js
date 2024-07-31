@@ -5,7 +5,7 @@ let adsManager
 let timeLeftAds = 6
 
 export function initializeIMA(video, videoAd, adContainer, btnSkipAd, textSkipAd, iconSkipAd, adTagUrl, onError) {
-  if(!window.google) {
+  if(!window.google.ima) {
     onError({ errorCode: 410, errorMessage: 'user using adblock!' })
     return
   }
@@ -66,13 +66,11 @@ export function initializeIMA(video, videoAd, adContainer, btnSkipAd, textSkipAd
     let error = adErrorEvent.getError()
     console.log(error)
     
-    if(error.j?.errorCode == 1005) {
+    if (error.j?.errorCode == 1005) {
         onError({ errorCode: 410, errorMessage: 'user using adblock!' })
     }
 
-    if (adsManager) {
-      adsManager.destroy()
-    }
+    adsManager?.destroy()
   }
 
   function onContentPauseRequested() {
@@ -119,7 +117,7 @@ export function initializeIMA(video, videoAd, adContainer, btnSkipAd, textSkipAd
 }
 
 export function loadAds(video, videoAd) {
-  if(!window.google) return
+  if(!window.google.ima) return
   // Prevent this function from running on if there are already ads loaded
   if (adsLoaded) {
     return
