@@ -5,7 +5,7 @@ let adsManager
 let timeLeftAds = 6
 
 export function initializeIMA(video, videoAd, adContainer, btnSkipAd, textSkipAd, iconSkipAd, adTagUrl, onError) {
-  if(!window.google.ima) {
+  if(!window.google?.ima) {
     onError({ errorCode: 410, errorMessage: 'user using adblock!' })
     return
   }
@@ -117,7 +117,7 @@ export function initializeIMA(video, videoAd, adContainer, btnSkipAd, textSkipAd
 }
 
 export function loadAds(video, videoAd) {
-  if(!window.google.ima) return
+  if(!window.google?.ima) return
   // Prevent this function from running on if there are already ads loaded
   if (adsLoaded) {
     return
