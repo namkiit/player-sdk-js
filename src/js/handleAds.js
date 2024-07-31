@@ -132,7 +132,7 @@ export function loadAds(video, videoAd) {
   console.log("loading ads")
 
   videoAd.load()
-  adDisplayContainer.initialize()
+  adDisplayContainer?.initialize()
 
   var width = video.clientWidth
   var height = video.clientHeight
