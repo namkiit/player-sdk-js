@@ -24,7 +24,7 @@ A video player SDK that plays adaptive media formats (such as DASH & HLS) in a b
 
 ## Player Initialization and Usage
 
-Upon successful import, the window DOM element will contain a variable named `playerSDK`. The `playerSDK` variable contains an instance of `VinasportPlayer`.
+Upon successful import, the window DOM element will contain a variable named `playerSDK`. The `playerSDK` variable contains an instance of `PlayerSDK`.
 
 ```javascript
 const { PlayerSDK } = window.playerSDK
@@ -88,7 +88,7 @@ const handleError = (error) => {
 Call the `initialize` function to initialize the player.
 
 ```javascript
-let player = new VinasportsPlayer(container, infoPlayer, handleError)
+let player = new PlayerSDK(container, infoPlayer, handleError)
 player.initialize()
 ```
 

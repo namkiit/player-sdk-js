@@ -15,7 +15,7 @@ import { callFingerprintAPI } from "./js/handleFingerprint"
 import { iconSkipAd } from "./assets/icons"
 import { renderUIAndEventListeners } from "./js/renderUI"
 
-export class VinasportsPlayer {
+export class PlayerSDK {
   constructor(container, options, cbError) {
     this.container = container
     this.options = options
