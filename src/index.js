@@ -561,12 +561,11 @@ export class PlayerSDK {
     // Initialize IMA sdk  
     if (isAdOn) {
       const loadAdsEvent = () => {
-        setTimeout(() => {
-          loadAds(video, video2)
-        }, 2000)
+        if (video.readyState >= 3) loadAds(this.container, video2)
       }
+
+      video.addEventListener('loadeddata', loadAdsEvent)
       window.loadAdsEvent = loadAdsEvent
-      video.addEventListener('play', loadAdsEvent)
       initializeIMA(video, video2, adContainer, btnSkipAd, textSkipAd, iconSkipAd, adTagUrl, onError)
     }
 
@@ -602,7 +601,7 @@ export class PlayerSDK {
     destroyAdsManager()
     window.adContainer.remove()
     document.querySelectorAll('.skip__ad')?.forEach((btn) => btn.remove())
-    window.video.removeEventListener("play", window.loadAdsEvent)
+    window.video.removeEventListener("loadeddata", window.loadAdsEvent)
     window.video.removeEventListener("timeupdate", window.handleTimeUpdateVideo)
     window.removeEventListener('interactive', this.interactive, false)
     document.removeEventListener('keydown', window.handleKeyBoard)

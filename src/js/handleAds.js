@@ -3,6 +3,8 @@ let adDisplayContainer
 let adsLoader
 let adsManager
 let timeLeftAds = 6
+window.timeLeftAds = timeLeftAds
+let intervalId // Add this line to store the interval ID
 
 export function initializeIMA(video, videoAd, adContainer, btnSkipAd, textSkipAd, iconSkipAd, adTagUrl, onError) {
   if(!window.google?.ima) {
@@ -77,16 +79,18 @@ export function initializeIMA(video, videoAd, adContainer, btnSkipAd, textSkipAd
     adContainer.classList.remove("hide")
     videoAd.classList.remove("hide")
 
-    let interval = setInterval(() => {
-      timeLeftAds = timeLeftAds - 1
-      textSkipAd.innerText = timeLeftAds
-        ? `Bỏ qua quảng cáo trong (${timeLeftAds}s)`
+    clearInterval(intervalId) // Clear the previous interval if it exists
+    intervalId = setInterval(() => { // Store the new interval ID
+      window.timeLeftAds = window.timeLeftAds - 1
+      textSkipAd.innerText = window.timeLeftAds
+        ? `Bỏ qua quảng cáo trong (${window.timeLeftAds}s)`
         : `Bỏ qua quảng cáo`
 
       btnSkipAd.classList.remove("hide")
 
-      if (timeLeftAds === 0) {
-        clearInterval(interval)
+      if (window.timeLeftAds <= 0) {
+        window.timeLeftAds = 0
+        clearInterval(intervalId) // Clear the interval when it reaches 0
         btnSkipAd.addEventListener("click", onContentResumeRequested)
         btnSkipAd.style.cursor = "pointer"
         btnSkipAd.classList.add("active")
@@ -99,12 +103,13 @@ export function initializeIMA(video, videoAd, adContainer, btnSkipAd, textSkipAd
 
   function onContentResumeRequested() {
     console.log("end ads")
-    adsManager.destroy()
+    // adsManager.destroy()
     adContainer.classList.add("hide")
     videoAd.classList.add("hide")
     btnSkipAd.classList.add("hide")
     btnSkipAd.classList.remove("active")
     iconSkipAd.classList.add("hide")
+    destroyAdsManager()
     video.play()
   }
 
@@ -116,7 +121,7 @@ export function initializeIMA(video, videoAd, adContainer, btnSkipAd, textSkipAd
   }
 }
 
-export function loadAds(video, videoAd) {
+export function loadAds(videoContainer, videoAd) {
   if(!window.google?.ima) return
   // Prevent this function from running on if there are already ads loaded
   if (adsLoaded) {
@@ -144,11 +149,13 @@ export function loadAds(video, videoAd) {
 }
 
 export function destroyAdsManager() {
+  console.log('destroy ad manager')
+  clearInterval(intervalId) // Clear the interval when destroying the ads manager
   adsManager?.destroy()
   adsManager = null
   adsLoaded = false
   adDisplayContainer = null
   adsLoader = null
   adsManager = null
-  timeLeftAds = 6
+  window.timeLeftAds = 6
 }
