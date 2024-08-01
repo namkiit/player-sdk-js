@@ -2,7 +2,6 @@ import {
   checkTypeLink, 
   destroyShaka, 
   detectIOS16Above, 
-  getCurrentTimeAndDate, 
   mobileCheck, 
   safariCheck, 
   setStyles 
@@ -135,19 +134,6 @@ export class PlayerSDK {
     window.video.removeEventListener("timeupdate", window.handleTimeUpdateVideo)
     window.removeEventListener('interactive', this.interactive, false)
     document.removeEventListener('keydown', window.handleKeyBoard)
-
-    let processedData = window.processedData
-    if (!processedData || !window.options.trackingUrl) return
-    processedData.ended_at = getCurrentTimeAndDate()
-    fetch(window.options.trackingUrl, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify([processedData])
-    })
-    window.removeEventListener('beforeunload', window.handleCloseTab)
   }
 
   showViews(realViews, minViews) {

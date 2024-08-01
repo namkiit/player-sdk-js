@@ -12,15 +12,18 @@ export const setStyles = (el, styles) => {
   }
 };
 
-export const setAttribute = (el, prop, val) => {
-  el.setAttribute(prop, val);
-};
-
 export const setAttributes = (el, attributes) => {
   for (var prop in attributes) {
-    setAttribute(el, prop, attributes[prop]);
+    el.setAttribute(prop, attributes[prop]);
   }
 };
+
+export const createElement = (tag, className, attributes = {}) => {
+  const element = document.createElement(tag);
+  setClass(element, className);
+  setAttributes(element, attributes);
+  return element;
+}
 
 export const parseSize = (val, p = 1) => {
   if (typeof val !== "number" || val === 0) {
@@ -49,48 +52,6 @@ export const checkTypeLink = (url) => {
     return "unknown";
   }
 }
-
-export const setLayout = (el, pos, size) => {
-  var { x, y } = pos || {};
-  //var { w, h } = size || {};
-  var w = size.w * -100;
-  var h = size.h * -100;
-  var styles = {
-    width: parseSize(w),
-    height: parseSize(h),
-  };
-  if (x === 1) {
-    if (w > 0) {
-      styles["left"] = "50%";
-      styles["margin-left"] = parseSize(w, -0.5);
-    } else {
-      styles["left"] = parseSize(0 - Math.abs(100 - Math.abs(w)), 0.5);
-      styles["margin-left"] = 0;
-    }
-  } else if (x === 2) {
-    styles["right"] = 0;
-    styles["margin-left"] = 0;
-  } else {
-    styles["left"] = 0;
-    styles["margin-left"] = 0;
-  }
-  if (y === 1) {
-    if (h > 0) {
-      styles["top"] = "50%";
-      styles["margin-top"] = parseSize(h, -0.5);
-    } else {
-      styles["top"] = parseSize(0 - Math.abs(100 - Math.abs(h)), 0.5);
-      styles["margin-top"] = 0;
-    }
-  } else if (y === 2) {
-    styles["bottom"] = 0;
-    styles["margin-top"] = 0;
-  } else {
-    styles["top"] = 0;
-    styles["margin-top"] = 0;
-  }
-  setStyles(el, styles);
-};
 
 export const parseJwt = (token) => {
   var base64Url = token.split('.')[1];
@@ -154,21 +115,6 @@ export const destroyShaka = () => {
   }
 }
 
-export const getCurrentTimeAndDate = () => {
-  const now = new Date();
-
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  const day = String(now.getDate()).padStart(2, '0');
-  const hour = String(now.getHours()).padStart(2, '0');
-  const minute = String(now.getMinutes()).padStart(2, '0');
-  const second = String(now.getSeconds()).padStart(2, '0');
-
-  const formattedDate = `${year}-${month}-${day} ${hour}:${minute}:${second}`;
-  console.log(formattedDate);
-  return formattedDate;
-}
-
 export const getCurrentOS = () => {
   if (navigator.userAgent.indexOf('Win') != -1) {
     return 'Windows';
@@ -216,35 +162,6 @@ export const waitFor = (target, type) => {
   return new Promise(resolve => {
     target.addEventListener(type, resolve, { once: true });
   });
-}
-
-export const fetchBuffer = async (url) => {
-  let result = await fetch(url);
-  let buffer = await result.arrayBuffer();
-  return buffer;
-}
-
-export const fetchAndAppend = async (sourceBuffer, url) => {
-  let buffer = await fetchBuffer(url);
-  sourceBuffer.appendBuffer(buffer);
-  await waitFor(sourceBuffer, 'updateend');
-}
-
-export const fetchAndWaitForEncrypted = async (video, sourceBuffer, url) => {
-  let updateEndPromise = fetchAndAppend(sourceBuffer, url);
-  let event = await waitFor(video, 'encrypted');
-  let session = await encrypted(event);
-  await updateEndPromise;
-  return session;
-}
-
-export const runAndWaitForLicenseRequest = async (session, callback) => {
-  let licenseRequestPromise = waitFor(session, 'message');
-  await callback();
-  let message = await licenseRequestPromise;
-
-  let response = await getResponse(message);
-  await session.update(response);
 }
 
 export const getResponse = async (event, spcPath, token, keyURI) => { // ADAPT: Tailor this to your own protocol.
