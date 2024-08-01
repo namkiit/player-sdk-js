@@ -28,7 +28,7 @@ export function initializeIMA(video, videoAd, adContainer, btnSkipAd, textSkipAd
   )
 
   video.addEventListener("ended", function () {
-    adsLoader.contentComplete()
+    adsLoader?.contentComplete()
   })
 
   var adsRequest = new google.ima.AdsRequest()
@@ -103,13 +103,12 @@ export function initializeIMA(video, videoAd, adContainer, btnSkipAd, textSkipAd
 
   function onContentResumeRequested() {
     console.log("end ads")
-    // adsManager.destroy()
+    adsManager.destroy()
     adContainer.classList.add("hide")
     videoAd.classList.add("hide")
     btnSkipAd.classList.add("hide")
     btnSkipAd.classList.remove("active")
     iconSkipAd.classList.add("hide")
-    destroyAdsManager()
     video.play()
   }
 
