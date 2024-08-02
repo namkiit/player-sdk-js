@@ -145,7 +145,7 @@ export function renderUIAndEventListeners(
 
     const divSwitchQuality = createElement("div", "div__quality hide")
     const titleSwitchQuality = createElement("div", "title__switch_quality")
-    titleSwitchTrack.innerText = "Lựa chọn chất lượng"
+    titleSwitchQuality.innerText = "Lựa chọn chất lượng"
     divSwitchQuality.appendChild(titleSwitchQuality)
     rightSideBtns.appendChild(divSwitchQuality)
 
