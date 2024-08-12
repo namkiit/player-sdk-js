@@ -115,7 +115,7 @@ export class PlayerSDK {
     // Event listeners for interactive
     window.addEventListener('interactive', this.interactive)
 
-    const verSdk = "ver.5.3.0"
+    const verSdk = "ver.2.13.0"
     console.log(verSdk)
   }
 

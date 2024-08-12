@@ -17,21 +17,23 @@ const onPlayerShaka = (video, dataPlayer, onError) => {
       switch (errorCode) {
         case 401:
           onError({ errorCode, errorMessage: "expired or invalid sign key!" })
+          playerShaka.unload()
           break
         case 403:
           onError({ errorCode, errorMessage: "copyright violated user" })
+          playerShaka.unload()
           break
         case 0:
           onError({ errorCode, errorMessage: "user using VPN" })
+          playerShaka.unload()
           break
         case null:
           onError({ errorCode: shakaCode })
           break
         default:
-          onError({ errorCode, errorMessage: "link error!" })
+          onError({ errorCode: errorCode || shakaCode, errorMessage: "link error!" })
       }
 
-      playerShaka.unload()
       clearTimeout(window.fingerprintTimeout)
     })
 
@@ -71,13 +73,10 @@ const onPlayerShaka = (video, dataPlayer, onError) => {
           e.target.appendChild(iconCheck)
         })
 
-        if (track.language !== "und")
-          window.divSwitchTrack.appendChild(trackDiv)
+        if (track.language !== "und") window.divSwitchTrack.appendChild(trackDiv)
       })
 
-      if (window.divSwitchTrack.childNodes.length < 3)
-        window.btnMultiAudio.classList.add("hide")
-
+      if (window.divSwitchTrack.childNodes.length < 3) window.btnMultiAudio.classList.add("hide")
 
       let qualityLevels = playerShaka.getVariantTracks()
       if (qualityLevels.length > 1) window.btnMultiQuality.classList.remove("hide")
@@ -112,7 +111,7 @@ const onPlayerShaka = (video, dataPlayer, onError) => {
         }
 
         levelDiv.addEventListener("click", (e) => {
-          window.playerShaka.configure({abr: {enabled: false}})
+          window.playerShaka.configure({ abr: { enabled: false } })
           window.playerShaka.selectVariantTrack(level, true, 0)
 
           document.querySelectorAll("[class^='level']").forEach((element) => {
@@ -129,11 +128,8 @@ const onPlayerShaka = (video, dataPlayer, onError) => {
     })
 
     if (src) {
-      drm
-        ? configPlayerSetupDRMToday(playerShaka, dataPlayer)
-        : configPlayerSetupNoDRMToday(playerShaka)
-      playerShaka
-        .load(src)
+      configurePlayer(playerShaka, dataPlayer, drm)
+      playerShaka.load(src)
         .then(() => {
           video.play().catch((error) => {
             if (error.name === "NotAllowedError") {
@@ -167,15 +163,17 @@ const onPlayerShaka = (video, dataPlayer, onError) => {
   }
 }
 
-const configPlayerSetupNoDRMToday = (playerShaka) => {
-  playerShaka.configure({
+const configurePlayer = (playerShaka, dataPlayer, drm) => {
+  const { licenseServer, contentId, signKey } = dataPlayer
+
+  const config = {
     streaming: {
-      rebufferingGoal: 0,
+      rebufferingGoal: 5,
       bufferingGoal: 24,
       bufferBehind: 10,
       retryParameters: {
         timeout: 10000, // timeout in ms, after which we abort 0 means never
-        maxAttempts: 3, // the maximum number of requests before we fail
+        maxAttempts: 5, // the maximum number of requests before we fail
         baseDelay: 1000, // the base delay in ms between retries
         backoffFactor: 2, // the multiplicative backoff factor between retries
         fuzzFactor: 0.5, // the fuzz factor to apply to each retry delay
@@ -185,7 +183,7 @@ const configPlayerSetupNoDRMToday = (playerShaka) => {
     manifest: {
       retryParameters: {
         timeout: 10000, // timeout in ms, after which we abort 0 means never
-        maxAttempts: 3, // the maximum number of requests before we fail
+        maxAttempts: 5, // the maximum number of requests before we fail
         baseDelay: 1000, // the base delay in ms between retries
         backoffFactor: 2, // the multiplicative backoff factor between retries
         fuzzFactor: 0.5, // the fuzz factor to apply to each retry delay
@@ -197,13 +195,10 @@ const configPlayerSetupNoDRMToday = (playerShaka) => {
     abr: {
       defaultBandwidthEstimate: 250000,
     },
-  })
-}
+  }
 
-const configPlayerSetupDRMToday = (playerShaka, dataPlayer) => {
-  const { licenseServer, contentId, signKey } = dataPlayer
-  playerShaka.configure({
-    drm: {
+  if (licenseServer && contentId && signKey && drm) {
+    config.drm = {
       servers: { "com.widevine.alpha": licenseServer },
       advanced: {
         "com.widevine.alpha": {
@@ -218,75 +213,49 @@ const configPlayerSetupDRMToday = (playerShaka, dataPlayer) => {
         backoffFactor: 2, // the multiplicative backoff factor between retries
         fuzzFactor: 0.5, // the fuzz factor to apply to each retry delay
       },
-    },
-    streaming: {
-      rebufferingGoal: 0,
-      bufferingGoal: 24,
-      bufferBehind: 10,
-      retryParameters: {
-        timeout: 10000, // timeout in ms, after which we abort 0 means never
-        maxAttempts: 3, // the maximum number of requests before we fail
-        baseDelay: 1000, // the base delay in ms between retries
-        backoffFactor: 2, // the multiplicative backoff factor between retries
-        fuzzFactor: 0.5, // the fuzz factor to apply to each retry delay
-      },
-      alwaysStreamText: true, // relevant subtitle function
-    },
-    manifest: {
-      retryParameters: {
-        timeout: 10000, // timeout in ms, after which we abort 0 means never
-        maxAttempts: 3, // the maximum number of requests before we fail
-        baseDelay: 1000, // the base delay in ms between retries
-        backoffFactor: 2, // the multiplicative backoff factor between retries
-        fuzzFactor: 0.5, // the fuzz factor to apply to each retry delay
-      },
-      dash: {
-        ignoreMinBufferTime: true,
-      },
-    },
-    abr: {
-      defaultBandwidthEstimate: 250000,
-    },
-  })
-
-  playerShaka.getNetworkingEngine().registerRequestFilter((type, request) => {
-    if (type === shaka.net.NetworkingEngine.RequestType.LICENSE) {
-      request.uris[0] += `?content_id=${contentId}`
-      request.headers["Token"] = signKey
     }
-  })
 
-  playerShaka.getNetworkingEngine().registerResponseFilter((type, response) => {
-    // Alias some utilities provided by the library.
-    const StringUtils = shaka.util.StringUtils
-    const Uint8ArrayUtils = shaka.util.Uint8ArrayUtils
+    playerShaka.getNetworkingEngine().registerRequestFilter((type, request) => {
+      if (type === shaka.net.NetworkingEngine.RequestType.LICENSE) {
+        request.uris[0] += `?content_id=${contentId}`
+        request.headers["Token"] = signKey
+      }
+    })
 
-    // Only manipulate license responses:
-    if (type == shaka.net.NetworkingEngine.RequestType.LICENSE) {
-      // This is the wrapped license, which is a JSON string.
-      const wrappedString = StringUtils.fromUTF8(response.data)
-      // Parse the JSON string into an object.
-      const wrapped = JSON.parse(wrappedString)
+    playerShaka.getNetworkingEngine().registerResponseFilter((type, response) => {
+      // Alias some utilities provided by the library.
+      const StringUtils = shaka.util.StringUtils
+      const Uint8ArrayUtils = shaka.util.Uint8ArrayUtils
 
-      // This is a base64-encoded version of the raw license.
-      const rawLicenseBase64 = wrapped.data
-      // Decode that base64 string into a Uint8Array and replace the response
-      // data.  The raw license will be fed to the Widevine CDM.
-      response.data = Uint8ArrayUtils.fromBase64(rawLicenseBase64)
+      // Only manipulate license responses:
+      if (type == shaka.net.NetworkingEngine.RequestType.LICENSE) {
+        // This is the wrapped license, which is a JSON string.
+        const wrappedString = StringUtils.fromUTF8(response.data)
+        // Parse the JSON string into an object.
+        const wrapped = JSON.parse(wrappedString)
 
-      // Read additional fields from the server.
-      // The server we are using in this tutorial does not send anything useful.
-      // In practice, you could send any license metadata the client might need.
-      // Here we log what the server sent to the JavaScript console for
-      // inspection.
-      console.log(wrapped)
+        // This is a base64-encoded version of the raw license.
+        const rawLicenseBase64 = wrapped.data
+        // Decode that base64 string into a Uint8Array and replace the response
+        // data. The raw license will be fed to the Widevine CDM.
+        response.data = Uint8ArrayUtils.fromBase64(rawLicenseBase64)
 
-      window.fingerprints.forEach((fingerprint) => {
-        fingerprint.innerHTML = wrapped.app_user_info.visual_code
-      })
-      sessionStorage.setItem("app-user-id", wrapped.app_user_info.app_user_id)
-    }
-  })
+        // Read additional fields from the server.
+        // The server we are using in this tutorial does not send anything useful.
+        // In practice, you could send any license metadata the client might need.
+        // Here we log what the server sent to the JavaScript console for
+        // inspection.
+        console.log(wrapped)
+
+        window.fingerprints.forEach((fingerprint) => {
+          fingerprint.innerHTML = wrapped.app_user_info.visual_code
+        })
+        sessionStorage.setItem("app-user-id", wrapped.app_user_info.app_user_id)
+      }
+    })
+  }
+
+  playerShaka.configure(config)
 }
 
 export default onPlayerShaka
