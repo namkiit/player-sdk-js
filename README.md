@@ -77,6 +77,12 @@ const infoPlayer = {
 - `startTime`: start time of the video (string)
 - `volume`: volume of the video, ranging from 0 to 1 (number)
 
+<b>Note:</b> You need to implement Google IMA SDK to use ads features
+
+```javascript
+<script src="//imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
+```
+
 `handleError` is a callback function that returns an error code when a video error occurs.
 
 ```javascript

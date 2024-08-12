@@ -145,9 +145,11 @@ const onPlayerShaka = async (video, dataPlayer, onError) => {
           if (errorCode == 1002) {
             onError({ errorCode: 0, errorMessage: "user using VPN" })
           } else onError({ errorCode })
+          playerShaka.unload()
         })
     } else {
       onError({ errorCode: 400, errorMessage: "link error!" })
+      playerShaka.unload()
     }
     window.playerShaka = playerShaka
   } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
