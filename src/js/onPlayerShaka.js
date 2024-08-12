@@ -2,12 +2,13 @@ import shaka from "shaka-player"
 import { setClass } from "../js/utils/helpers"
 import iconCheck from "../assets/icons/iconCheck"
 
-const onPlayerShaka = (video, dataPlayer, onError) => {
+const onPlayerShaka = async (video, dataPlayer, onError) => {
   const { src, drm } = dataPlayer
   shaka.polyfill.installAll()
 
   if (shaka.Player.isBrowserSupported()) {
-    let playerShaka = new shaka.Player(video)
+    let playerShaka = new shaka.Player()
+    await playerShaka.attach(video)
     console.log("Shaka version:", shaka.Player.version)
 
     playerShaka.addEventListener("error", (event) => {
