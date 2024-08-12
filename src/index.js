@@ -47,6 +47,7 @@ export class PlayerSDK {
       adContainer,
       btnSkipAd,
       textSkipAd,
+      loadingMask,
       fingerprints
     } = renderUIAndEventListeners(
       this.container, 
@@ -98,10 +99,10 @@ export class PlayerSDK {
     const type = checkTypeLink(this.options.src)
     switch (type) {
       case "dash":
-        onPlayerShaka(video, this.options, onError)
+        onPlayerShaka(video, loadingMask, this.options, onError)
         break
       case "m3u8":
-        (this.options.drm && isSafari) ? onPlayerFairplay(video, this.options, onError) : onPlayerShaka(video, this.options, onError)
+        (this.options.drm && isSafari) ? onPlayerFairplay(video, this.options, onError) : onPlayerShaka(video, loadingMask, this.options, onError)
         break
       default:
         onReloadLinkPlayBackup()

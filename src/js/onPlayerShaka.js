@@ -2,7 +2,7 @@ import shaka from "shaka-player"
 import { setClass } from "../js/utils/helpers"
 import iconCheck from "../assets/icons/iconCheck"
 
-const onPlayerShaka = async (video, dataPlayer, onError) => {
+const onPlayerShaka = async (video, loadingMask, dataPlayer, onError) => {
   const { src, drm } = dataPlayer
   shaka.polyfill.installAll()
 
@@ -28,11 +28,11 @@ const onPlayerShaka = async (video, dataPlayer, onError) => {
           onError({ errorCode, errorMessage: "user using VPN" })
           playerShaka.unload()
           break
-        case null:
-          onError({ errorCode: shakaCode })
-          break
         default:
-          onError({ errorCode: errorCode || shakaCode, errorMessage: "link error!" })
+          if (!errorCode && shakaCode === 1002 || 1003) {
+            loadingMask.classList.remove("hide")
+          }
+          onError({ errorCode: errorCode || shakaCode })
       }
 
       clearTimeout(window.fingerprintTimeout)

@@ -525,6 +525,7 @@ export function renderUIAndEventListeners(
         adContainer,
         btnSkipAd,
         textSkipAd,
+        loadingMask,
         fingerprints
     }
 }
