@@ -28,7 +28,8 @@ import {
 import { formatTimeVideo, convertPercentageToTimeSeeked, formatTimeEvents } from "./formatTime"
 import { handleVolumeSliderUpdate, togglePlay, handleForwardVideo, handleRewindVideo, handleProgress } from "./handlePlayer"
 
-let oldSeekValue = null
+const durationTimeshiftTotal = 1 // timeshift video live maximum duration in hour
+let oldSeekValue = 100
 let timeoutController
 window.timeoutController = timeoutController
 
@@ -36,13 +37,13 @@ export function renderUIAndEventListeners(
     container, volume, isMobile, name, startTime, isLive, isSafari, 
     isLiveTime, isFullscreen, isIpad, allowTimeshift
 ) {
-    const videoWrapper = createElement("div", "video__wrapper");
+    const videoWrapper = createElement("div", "video__wrapper")
     const video = createElement("video", "main__video", {
         playsinline: true,
         volume,
         muted: volume === 0
-    });
-    const videoAd = createElement("video", "ads__video hide");
+    })
+    const videoAd = createElement("video", "ads__video hide")
 
     const titleWrapper = createElement("div", "title__wrapper hide")
     const titleInner = createElement("div", `title__inner ${isMobile ? "mobile" : ""}`)
@@ -125,7 +126,7 @@ export function renderUIAndEventListeners(
 
     const timerVideo = createElement("div", `video__timer ${isLive ? "hide" : ""} ${isMobile ? "mobile" : ""}`)
     const btnLive = createElement("div", `button__live disable_mouse ${isLive ? "" : "hide"}`)
-    const textGoToLive = createElement("div", "go__live")
+    const textGoToLive = createElement("div", "go__live hide")
     textGoToLive.innerText = "Tới trực tiếp"
     btnLive.append(iconLive, iconGoToLive, textGoToLive)
 
@@ -199,6 +200,11 @@ export function renderUIAndEventListeners(
         formatTimeVideo(video, timerVideo)
         loadingMask.classList.add("hide")
         btnPlayCenter.classList.remove("hide")
+
+        if (window.seekBarLiveTimer) {
+            clearInterval(window.seekBarLiveTimer)
+            window.seekBarLiveTimer = null
+        }
     }
 
     video.addEventListener('timeupdate', handleTimeUpdateVideo)
@@ -206,6 +212,42 @@ export function renderUIAndEventListeners(
     video.addEventListener("waiting", () => {
         loadingMask.classList.remove("hide")
         btnPlayCenter.classList.add("hide")
+
+        if (isLive && allowTimeshift) {
+            if (window.seekBarLiveTimer) {
+                clearInterval(window.seekBarLiveTimer)
+                window.seekBarLiveTimer = null
+            }
+            //handle timeshift livevideo
+            window.seekBarLiveTimer = setInterval(() => {
+                oldSeekValue = oldSeekValue - (1 / (durationTimeshiftTotal * 3600)) * 100
+                progressBar.style.setProperty("--progress-percent", (100 - ((oldSeekValue - 0) * 100) / 100))
+                progressBar.value = oldSeekValue
+                console.log(oldSeekValue)
+                isLiveTime = oldSeekValue - 99.5 > 0 // 99.5 percent of live time
+                isLiveTime ? btnLive.classList.add("disable_mouse") : btnLive.classList.remove("disable_mouse")
+                handleProgress(video, progressBar, iconPlay, iconPause, iconReplay, iconLive, iconGoToLive, textGoToLive, mask, isLive, isLiveTime, isMobile)
+            }, 1000)
+        }
+    })
+
+    video.addEventListener("pause", () => {
+        if (isLive && allowTimeshift) {
+            if (window.seekBarLiveTimer) {
+                clearInterval(window.seekBarLiveTimer)
+                window.seekBarLiveTimer = null
+            }
+            //handle timeshift livevideo
+            window.seekBarLiveTimer = setInterval(() => {
+                oldSeekValue = oldSeekValue - (1 / (durationTimeshiftTotal * 3600)) * 100
+                progressBar.style.setProperty("--progress-percent", (100 - ((oldSeekValue - 0) * 100) / 100))
+                progressBar.value = oldSeekValue
+                console.log(oldSeekValue)
+                isLiveTime = oldSeekValue - 99.5 > 0 // 99.5 percent of live time
+                isLiveTime ? btnLive.classList.add("disable_mouse") : btnLive.classList.remove("disable_mouse")
+                handleProgress(video, progressBar, iconPlay, iconPause, iconReplay, iconLive, iconGoToLive, textGoToLive, mask, isLive, isLiveTime, isMobile)
+            }, 1000)
+        }
     })
 
     video.addEventListener("seeking", () => {
@@ -263,8 +305,6 @@ export function renderUIAndEventListeners(
 
     // handle seek video and livestream timeshift / playback
     progressBar.addEventListener("input", (e) => {
-        const durationTimeshiftTotal = 1 // 1 hour
-
         e.stopPropagation()
         e.preventDefault()
 
@@ -297,8 +337,8 @@ export function renderUIAndEventListeners(
             valueHover = convertPercentageToTimeSeeked(valueHover)
 
             tooltip.style.visibility = "visible"
-            tooltip.style.top = progressBar.getBoundingClientRect().top - 45 + "px";
-            tooltip.style.left = e.clientX + "px";
+            tooltip.style.top = progressBar.getBoundingClientRect().top - 45 + "px"
+            tooltip.style.left = e.clientX + "px"
             tooltip.innerHTML = valueHover
         })
 
@@ -382,6 +422,8 @@ export function renderUIAndEventListeners(
             progressBar.value = 100
             isLiveTime = true
             btnLive.classList.add("disable_mouse")
+            oldSeekValue = 100
+            video.play()
         }
     })
 
@@ -484,5 +526,5 @@ export function renderUIAndEventListeners(
         btnSkipAd,
         textSkipAd,
         fingerprints
-    };
+    }
 }

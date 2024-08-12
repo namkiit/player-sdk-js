@@ -1,10 +1,10 @@
-const path = require('path');
-const webpack = require('webpack');
-const { merge } = require('webpack-merge');
-const baseConfig = require('./webpack.base.conf');
+const path = require('path')
+const webpack = require('webpack')
+const { merge } = require('webpack-merge')
+const baseConfig = require('./webpack.base.conf')
 
-const basePath = path.resolve(__dirname, '../');
-const publicPath = path.relative(basePath, '../dist');
+const basePath = path.resolve(__dirname, '../')
+const publicPath = path.relative(basePath, '../dist')
 
 module.exports = merge(baseConfig, {
 	mode: 'development',

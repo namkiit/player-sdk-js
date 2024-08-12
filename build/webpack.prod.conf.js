@@ -1,8 +1,8 @@
-const webpack = require('webpack');
-const { merge } = require('webpack-merge');
-const baseConfig = require('./webpack.base.conf');
-const TerserPlugin = require('terser-webpack-plugin');
-process.env.mode = 'ONLINE';
+const webpack = require('webpack')
+const { merge } = require('webpack-merge')
+const baseConfig = require('./webpack.base.conf')
+const TerserPlugin = require('terser-webpack-plugin')
+process.env.mode = 'ONLINE'
 
 module.exports = merge(baseConfig, {
 	mode: 'production',
@@ -11,7 +11,7 @@ module.exports = merge(baseConfig, {
 		maxAssetSize: 200000,
 		maxEntrypointSize: 400000,
 		assetFilter: function (assetFilename) {
-			return assetFilename.endsWith('.css') || assetFilename.endsWith('.js');
+			return assetFilename.endsWith('.css') || assetFilename.endsWith('.js')
 		}
 	},
 	optimization: {
@@ -42,4 +42,4 @@ module.exports = merge(baseConfig, {
 			__ENV_MODE__: JSON.stringify('production')
 		})
 	]
-});
+})

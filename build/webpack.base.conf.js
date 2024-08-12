@@ -1,11 +1,11 @@
-const path = require('path');
-const webpack = require('webpack');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const pkgJson = require('../package.json');
+const path = require('path')
+const webpack = require('webpack')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const pkgJson = require('../package.json')
 
-const basePath = path.resolve(__dirname, '../');
-const buildPath = path.resolve(basePath, './build');
-const distPath = path.resolve(basePath, './dist');
+const basePath = path.resolve(__dirname, '../')
+const buildPath = path.resolve(basePath, './build')
+const distPath = path.resolve(basePath, './dist')
 
 module.exports = {
 	entry: {
@@ -49,4 +49,4 @@ module.exports = {
 			__VERSION__: JSON.stringify(pkgJson.version)
 		})
 	]
-};
+}

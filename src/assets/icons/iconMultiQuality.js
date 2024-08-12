@@ -1,15 +1,15 @@
-const iconMultiQuality = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-const iconMultiQualityPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+const iconMultiQuality = document.createElementNS("http://www.w3.org/2000/svg", "svg")
+const iconMultiQualityPath = document.createElementNS("http://www.w3.org/2000/svg", "path")
 
-iconMultiQuality.setAttribute('height', '24');
-iconMultiQuality.setAttribute('viewBox', '0 0 24 24');
-iconMultiQuality.setAttribute('width', '24');
+iconMultiQuality.setAttribute('height', '24')
+iconMultiQuality.setAttribute('viewBox', '0 0 24 24')
+iconMultiQuality.setAttribute('width', '24')
 
 iconMultiQualityPath.setAttribute('d', `M15,17h6v1h-6V17z M11,17H3v1h8v2h1v-2v-1v-2h-1V17z M14,8h1V6V5V3h-1v2H3v1h11V8z 
-            M18,5v1h3V5H18z M6,14h1v-2v-1V9H6v2H3v1 h3V14z M10,12h11v-1H10V12z`);
-iconMultiQualityPath.setAttribute('fill', 'white');
-iconMultiQualityPath.setAttribute('fillOpacity', '0.87');
+            M18,5v1h3V5H18z M6,14h1v-2v-1V9H6v2H3v1 h3V14z M10,12h11v-1H10V12z`)
+iconMultiQualityPath.setAttribute('fill', 'white')
+iconMultiQualityPath.setAttribute('fillOpacity', '0.87')
 
-iconMultiQuality.appendChild(iconMultiQualityPath);
+iconMultiQuality.appendChild(iconMultiQualityPath)
 
-export default iconMultiQuality;
+export default iconMultiQuality
