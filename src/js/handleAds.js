@@ -31,7 +31,7 @@ export function initializeIMA(video, videoAd, adContainer, btnSkipAd, textSkipAd
     adsLoader?.contentComplete()
   })
 
-  var adsRequest = new google.ima.AdsRequest()
+  let adsRequest = new google.ima.AdsRequest()
   adsRequest.adTagUrl = adTagUrl
 
   // Specify the linear and nonlinear slot sizes. This helps the SDK to
@@ -72,7 +72,7 @@ export function initializeIMA(video, videoAd, adContainer, btnSkipAd, textSkipAd
         onError({ errorCode: 410, errorMessage: 'user using adblock!' })
     }
 
-    adsManager?.destroy()
+    destroyAdsManager()
   }
 
   function onContentPauseRequested() {
@@ -103,7 +103,7 @@ export function initializeIMA(video, videoAd, adContainer, btnSkipAd, textSkipAd
 
   function onContentResumeRequested() {
     console.log("end ads")
-    adsManager.destroy()
+    adsManager?.destroy()
     adContainer.classList.add("hide")
     videoAd.classList.add("hide")
     btnSkipAd.classList.add("hide")
@@ -113,7 +113,7 @@ export function initializeIMA(video, videoAd, adContainer, btnSkipAd, textSkipAd
   }
 
   function onAdLoaded(adEvent) {
-    var ad = adEvent.getAd()
+    let ad = adEvent.getAd()
     if (!ad.isLinear()) {
       video.play()
     }
@@ -136,8 +136,8 @@ export function loadAds(videoContainer, videoAd) {
   videoAd.load()
   adDisplayContainer?.initialize()
 
-  var width = video.clientWidth
-  var height = video.clientHeight
+  let width = video.clientWidth
+  let height = video.clientHeight
   try {
     adsManager.init(width, height, google.ima.ViewMode.NORMAL)
     adsManager.start()
@@ -157,4 +157,5 @@ export function destroyAdsManager() {
   adsLoader = null
   adsManager = null
   window.timeLeftAds = 6
+  window.adContainer.remove()
 }

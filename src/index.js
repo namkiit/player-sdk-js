@@ -115,9 +115,11 @@ export class PlayerSDK {
 
     // Event listeners for interactive
     window.addEventListener('interactive', this.interactive)
+  }
 
-    const verSdk = "ver.2.13.0"
-    console.log(verSdk)
+  getCurrentVersion() {
+    const verSdk = "ver.2.13.1"
+    return verSdk
   }
 
   destroy() {
@@ -129,7 +131,6 @@ export class PlayerSDK {
     clearTimeout(window.fingerprintTimeout)
     destroyShaka()
     destroyAdsManager()
-    window.adContainer.remove()
     document.querySelectorAll('.skip__ad')?.forEach((btn) => btn.remove())
     window.video.removeEventListener("loadeddata", window.loadAdsEvent)
     window.video.removeEventListener("timeupdate", window.handleTimeUpdateVideo)

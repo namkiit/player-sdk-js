@@ -4,7 +4,6 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const pkgJson = require('../package.json')
 
 const basePath = path.resolve(__dirname, '../')
-const buildPath = path.resolve(basePath, './build')
 const distPath = path.resolve(basePath, './dist')
 
 module.exports = {

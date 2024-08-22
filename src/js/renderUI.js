@@ -34,7 +34,7 @@ let timeoutController
 window.timeoutController = timeoutController
 
 export function renderUIAndEventListeners(
-    container, volume, isMobile, name, startTime, isLive, isSafari, 
+    container, volume, isMobile, name, startTime, isLive, isSafari,
     isLiveTime, isFullscreen, isIpad, allowTimeshift
 ) {
     const videoWrapper = createElement("div", "video__wrapper")
@@ -443,15 +443,10 @@ export function renderUIAndEventListeners(
         let noHLS = video.getAttribute('playsinline')
         e.stopPropagation()
 
-        if (noHLS) {
-            isFullscreen ? exitFakeFullScreen() : fakeFullScreen()
-        } else {
-            if (document.fullscreenElement) document.exitFullscreen()
-            else if (document.webkitFullscreenElement) document.webkitExitFullscreen()
-            else {
-                isSafari ? isIpad ? container.webkitEnterFullscreen() : video.webkitEnterFullscreen() : container.requestFullscreen()
-            }
-        }
+        if (noHLS) isFullscreen ? exitFakeFullScreen() : fakeFullScreen()
+        else if (document.fullscreenElement) document.exitFullscreen()
+        else if (document.webkitFullscreenElement) document.webkitExitFullscreen()
+        else isSafari ? isIpad ? container.webkitEnterFullscreen() : video.webkitEnterFullscreen() : container.requestFullscreen()
     })
 
     btnPlayCenter.addEventListener("click", () => {
@@ -463,14 +458,14 @@ export function renderUIAndEventListeners(
     // handle fullscreen change
     if (isSafari) {
         document.onwebkitfullscreenchange = () => {
-            document.webkitFullScreenElement ? isFullscreen = true : isFullscreen = false
+            isFullscreen = !!document.webkitFullScreenElement
             iconMinimize.classList.toggle("hide", !document.webkitFullscreenElement)
             iconFullscreen.classList.toggle("hide", document.webkitFullscreenElement)
             titleWrapper.classList.toggle("hide", !document.webkitFullscreenElement)
         }
     } else {
         document.onfullscreenchange = () => {
-            document.fullscreenElement ? isFullscreen = true : isFullscreen = false
+            isFullscreen = !!document.fullScreenElement
             iconMinimize.classList.toggle("hide", !document.fullscreenElement)
             iconFullscreen.classList.toggle("hide", document.fullscreenElement)
             titleWrapper.classList.toggle("hide", !document.fullscreenElement)
