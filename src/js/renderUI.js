@@ -27,6 +27,8 @@ import {
 } from "./utils/helpers"
 import { formatTimeVideo, convertPercentageToTimeSeeked, formatTimeEvents } from "./formatTime"
 import { handleVolumeSliderUpdate, togglePlay, handleForwardVideo, handleRewindVideo, handleProgress } from "./handlePlayer"
+import tippy, { followCursor, sticky } from "tippy.js"
+import 'tippy.js/dist/tippy.css'
 
 const durationTimeshiftTotal = 1 // timeshift video live maximum duration in hour
 let oldSeekValue = 100
@@ -80,9 +82,6 @@ export function renderUIAndEventListeners(
         value: `${isLive ? 100 : 0}`,
     })
     progressWrapper.appendChild(progressBar)
-
-    const tooltip = createElement('div', 'tooltip')
-    videoWrapper.appendChild(tooltip)
 
     const controllerBtns = createElement("div", "control__btns")
     const leftSideBtns = createElement("div", `control__btns__leftside ${isLive ? "live" : ""} ${isMobile ? "mobile" : ""}`)
@@ -334,18 +333,17 @@ export function renderUIAndEventListeners(
     progressBar.addEventListener('focus', (e) => progressBar.blur())
 
     if (isLive && allowTimeshift) {
+        const tooltipInstance = tippy(progressBar, {
+            content: '',
+            followCursor: 'horizontal',
+            sticky: true,
+            plugins: [followCursor, sticky]
+        })
+
         progressBar.addEventListener("mousemove", (e) => {
             let valueHover = ((e.offsetX / e.target.clientWidth) * parseInt(e.target.getAttribute('max'), 10))
             valueHover = convertPercentageToTimeSeeked(valueHover)
-
-            tooltip.style.visibility = "visible"
-            tooltip.style.top = progressBar.getBoundingClientRect().top - 45 + "px"
-            tooltip.style.left = e.clientX + "px"
-            tooltip.innerHTML = valueHover
-        })
-
-        progressBar.addEventListener("mouseout", (e) => {
-            tooltip.style.visibility = "hidden"
+            tooltipInstance.setContent(valueHover)
         })
     }
 

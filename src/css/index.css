@@ -570,29 +570,6 @@
   cursor: none;
 }
 
-/* Tooltip CSS */
-.tooltip {
-  position: absolute;
-  visibility: hidden;
-  background-color: #000E2BCC;
-  padding: 8px 12px;
-  color: white;
-  z-index: 999;
-  border-radius: 4px;
-  transform: translateX(-50%);
-}
-
-.tooltip::after {
-  content: "";
-  position: absolute;
-  top: 100%; /* At the bottom of the tooltip */
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: #000E2BCC transparent transparent transparent;
-}
-
 /* Input Range CSS */
 input[type="range"]:hover {
   cursor: pointer;
