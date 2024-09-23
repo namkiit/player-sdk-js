@@ -271,6 +271,7 @@ export function renderUIAndEventListeners(
     const handleHideController = (event) => {
         if (event.type === 'mousedown' && (video.paused || isMobile)) return
         controllerWrapper.classList.remove("hide")
+        videoWrapper.classList.remove("cursor_none")
         if (isLive) window.viewCount.classList.add("hide")
         if (document.fullscreenElement || document.webkitFullScreenElement) titleWrapper.classList.remove("hide")
 
@@ -279,6 +280,7 @@ export function renderUIAndEventListeners(
             controllerWrapper.classList.add("hide")
             divSwitchTrack.classList.add("hide")
             divSwitchQuality.classList.add("hide")
+            videoWrapper.classList.remove("cursor_none")
             if (isLive) window.viewCount.classList.remove("hide")
             if (document.fullscreenElement || document.webkitFullscreenElement) titleWrapper.classList.add("hide")
         }, 3000)

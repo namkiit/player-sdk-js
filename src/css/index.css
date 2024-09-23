@@ -566,6 +566,10 @@
   cursor: pointer;
 }
 
+.cursor_none {
+  cursor: none;
+}
+
 /* Tooltip CSS */
 .tooltip {
   position: absolute;
