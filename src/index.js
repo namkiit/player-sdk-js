@@ -118,7 +118,7 @@ export class PlayerSDK {
   }
 
   getCurrentVersion() {
-    const verSdk = "ver.2.13.1"
+    const verSdk = "ver.2.14.0"
     return verSdk
   }
 

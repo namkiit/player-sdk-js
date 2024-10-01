@@ -473,7 +473,6 @@ export function renderUIAndEventListeners(
     }
 
     const handleKeyBoard = debounce((e) => {
-        e.preventDefault()
         switch (e.keyCode) {
             case 32: // spacebar
                 togglePlay(video, isLive, iconWrapper, iconInner, iconPlayBig, iconPauseBig)
