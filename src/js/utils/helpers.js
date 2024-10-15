@@ -141,12 +141,6 @@ export function debounce(func, wait) {
   }
 }
 
-export const preventDefaultForSpace = (e) => {
-  if (e.keyCode === 32) {
-    e.preventDefault()
-  }
-}
-
 // Fairplay DRM
 const ToBase64 = (u8) => {
   return btoa(String.fromCharCode.apply(null, u8))

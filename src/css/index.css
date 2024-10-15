@@ -146,18 +146,18 @@
   transform: scale(0.5);
 }
 
-.icon__rewind,
-.icon__forward {
+.icon__rewind, .icon__forward {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  height: 2.875rem;
-  width: 2.875rem;
+  height: 5rem;
+  width: 5rem;
   padding: 0.5rem;
   border-radius: 50%;
   z-index: 3;
-  background-color: #05173a;
+  background-color: rgba(0, 0, 0, 0.4);
   animation: fadeOut ease 0.5s;
+  display: flex;
 }
 
 .icon__rewind {

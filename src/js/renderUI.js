@@ -13,6 +13,8 @@ import {
     iconReplay,
     iconReplayBig,
     iconRewind,
+    iconSeekBack,
+    iconSeekForward,
     iconSkipAd,
     iconVolume,
     iconGoToLive,
@@ -22,7 +24,6 @@ import {
 import {
     createElement,
     debounce,
-    preventDefaultForSpace,
     setStyles
 } from "./utils/helpers"
 import { formatTimeVideo, convertPercentageToTimeSeeked, formatTimeEvents } from "./formatTime"
@@ -98,11 +99,9 @@ export function renderUIAndEventListeners(
     const btnForward = createElement('div', `button ${isLive ? 'hide' : ''} ${isMobile ? "mobile" : ""}`)
     btnForward.appendChild(iconForward)
 
-    const clonedIconRewind = iconRewind.cloneNode(true)
-    const clonedIconForward = iconForward.cloneNode(true)
-    clonedIconRewind.setAttribute('class', `icon__rewind ${isMobile ? "mobile" : ""} hide`)
-    clonedIconForward.setAttribute('class', `icon__forward ${isMobile ? "mobile" : ""} hide`)
-    videoWrapper.append(clonedIconRewind, clonedIconForward)
+    iconSeekBack.setAttribute('class', `icon__rewind ${isMobile ? "mobile" : ""} hide`)
+    iconSeekForward.setAttribute('class', `icon__forward ${isMobile ? "mobile" : ""} hide`)
+    videoWrapper.append(iconSeekBack, iconSeekForward)
 
     const volumeWrapper = createElement("div", "volume__wrapper")
 
@@ -473,15 +472,23 @@ export function renderUIAndEventListeners(
     }
 
     const handleKeyBoard = debounce((e) => {
+        const activeElement = document.activeElement
+        const isInputFocused = activeElement.tagName === 'INPUT' ||
+            activeElement.tagName === 'TEXTAREA' ||
+            activeElement.isContentEditable
+
+        if (isInputFocused) return
+
         switch (e.keyCode) {
             case 32: // spacebar
+                e.preventDefault()
                 togglePlay(video, isLive, iconWrapper, iconInner, iconPlayBig, iconPauseBig)
                 break
             case 37: // left arrow
-                handleRewindVideo(video, clonedIconRewind)
+                handleRewindVideo(video, iconSeekBack)
                 break
             case 39: // right arrow
-                handleForwardVideo(video, clonedIconForward)
+                handleForwardVideo(video, iconSeekForward)
                 break
             default:
         }
@@ -489,9 +496,6 @@ export function renderUIAndEventListeners(
 
     if (!isLive) {
         document.addEventListener("keydown", handleKeyBoard)
-        document.addEventListener("keydown", preventDefaultForSpace)
-        document.addEventListener("keypress", preventDefaultForSpace)
-        document.addEventListener("keyup", preventDefaultForSpace)
     }
 
     window.video = video
