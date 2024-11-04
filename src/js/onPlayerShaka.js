@@ -29,7 +29,7 @@ const onPlayerShaka = async (video, loadingMask, dataPlayer, onError) => {
           playerShaka.unload()
           break
         default:
-          if (!errorCode && shakaCode === 1002 || 1003) {
+          if (!errorCode && (shakaCode === 1002 || shakaCode === 1003)) {
             loadingMask.classList.remove("hide")
           }
           onError({ errorCode: errorCode || shakaCode })
